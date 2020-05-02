@@ -34,66 +34,54 @@ traversal_path = []
 
 
 # Use EXPLORED set to store rooms in map_graph that have NO REMAINING ? ROOMS
+def reverse_dir(dir):
+    if dir == 'n':
+        return('s')
+    if dir == 's':
+        return('n')
+    if dir == 'e':
+        return('w')
+    if dir == 'w':
+        return('e')
+
+
 def traversal():
-    map_graph = {}
-    to_explore = []
-    current_room = player.current_room.id
-    exits = player.current_room.get_exits()
-    prev_room = None
-    map_graph[current_room] = {exit: '?' for exit in exits}
-
-    while len(map_graph) < len(room_graph):
-        prev_room = current_room
-        current_room = player.current_room.id
-        exits = player.current_room.get_exits()
-
-        if current_room not in map_graph:
-            map_graph[current_room] = {exit: '?' for exit in exits}
-        to_explore = [
-            exit for exit in map_graph[current_room] if map_graph[current_room][exit] == '?'
-        ]
-        # print(current_room)
-        if len(to_explore) > 0:
-            # print(to_explore)
-            to_travel = to_explore.pop(0)
-            reverse = ''
-            if to_travel == 'n':
-                reverse = 's'
-            if to_travel == 's':
-                reverse = 'n'
-            if to_travel == 'e':
-                reverse = 'w'
-            if to_travel == 'w':
-                reverse = 'e'
-
-            player.travel(to_travel)
-            traversal_path.append(to_travel)
-            # map_graph[current_room][reverse] = prev_room
-            # map_graph[prev_room][to_travel] = current_room
-
-            print(map_graph)
-
-
-# traversal()
-
-def graph_solution():
     map_graph = Graph()
     mapped = set()
     explored = {}
     to_explore = []
+    current_room = player.current_room.id
 
     while len(explored) < len(room_graph):
+        prev_room = current_room
         current_room = player.current_room.id
         exits = player.current_room.get_exits()
         random_dir = exits[randint(0, (len(exits) - 1))]
+        reverse = reverse_dir(random_dir)
+        # print(random_dir, reverse)
         if current_room not in explored:
             # this room has been explored but not mapped
             explored[current_room] = {exit: '?' for exit in exits}
+            explored[current_room][reverse] = prev_room
+        if prev_room != current_room:
+            explored[current_room][reverse] = prev_room
+            explored[prev_room][random_dir] = current_room
+        # else:
+            # if len(exits) > 1:
+            #     exits.remove(random_dir)
+            #     random_dir = exits[randint(0, (len(exits) - 1))]
+            #     reverse = reverse_dir(random_dir)
+            # else:
+            #     random_dir = exits[0]
+            #     reverse = reverse_dir(random_dir)
         player.travel(random_dir)
+        print(explored, '\n', explored[current_room],
+              '\n', f'{random_dir} to {explored[current_room][random_dir]}')
         traversal_path.append(random_dir)
+    print(explored)
 
 
-graph_solution()
+traversal()
 
 # TRAVERSAL TEST - DO NOT MODIFY
 visited_rooms = set()

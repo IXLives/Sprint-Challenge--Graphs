@@ -46,4 +46,44 @@ def second_try():
             traversal_path.append(to_travel)
 
 
-first_pass()
+def traversal():
+    map_graph = {}
+    to_explore = []
+    current_room = player.current_room.id
+    exits = player.current_room.get_exits()
+    prev_room = None
+    map_graph[current_room] = {exit: '?' for exit in exits}
+
+    while len(map_graph) < len(room_graph):
+        prev_room = current_room
+        current_room = player.current_room.id
+        exits = player.current_room.get_exits()
+
+        if current_room not in map_graph:
+            map_graph[current_room] = {exit: '?' for exit in exits}
+        to_explore = [
+            exit for exit in map_graph[current_room] if map_graph[current_room][exit] == '?'
+        ]
+        # print(current_room)
+        if len(to_explore) > 0:
+            # print(to_explore)
+            to_travel = to_explore.pop(0)
+            reverse = ''
+            if to_travel == 'n':
+                reverse = 's'
+            if to_travel == 's':
+                reverse = 'n'
+            if to_travel == 'e':
+                reverse = 'w'
+            if to_travel == 'w':
+                reverse = 'e'
+
+            player.travel(to_travel)
+            traversal_path.append(to_travel)
+            # map_graph[current_room][reverse] = prev_room
+            # map_graph[prev_room][to_travel] = current_room
+
+            print(map_graph)
+
+
+# traversal()
