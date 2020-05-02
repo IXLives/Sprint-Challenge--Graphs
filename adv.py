@@ -78,19 +78,19 @@ def traversal():
 
 def graph_solution():
     map_graph = Graph()
+    mapped = set()
     explored = {}
     to_explore = []
-
-    current_room = player.current_room.id
-    map_graph.add_vertex(current_room)
 
     while len(explored) < len(room_graph):
         current_room = player.current_room.id
         exits = player.current_room.get_exits()
-
+        random_dir = exits[randint(0, (len(exits) - 1))]
         if current_room not in explored:
-            map_graph.add_vertex(current_room)
+            # this room has been explored but not mapped
             explored[current_room] = {exit: '?' for exit in exits}
+        player.travel(random_dir)
+        traversal_path.append(random_dir)
 
 
 graph_solution()

@@ -23,16 +23,20 @@ class Graph:
         """
         Add a vertex to the graph.
         """
-        self.vertices[vertex_id] = set()
+        self.vertices[vertex_id] = {}
 
     def add_edge(self, v1, v2, direction=''):
         """
         Add a directed edge to the graph.
         """
         if v1 in self.vertices and v2 in self.vertices:
-            self.vertices[v1].add(v2)
+            self.vertices[v1][v2] = '?'
         else:
             raise IndexError('That vertex does not exist')
+
+    def add_weight(self, v1, v2, direction):
+        if v1 in self.vertices and v2 in self.vertices:
+            self.vertices[v1][v2] = direction
 
     def get_neighbors(self, vertex_id):
         """
