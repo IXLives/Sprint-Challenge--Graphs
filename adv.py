@@ -46,39 +46,47 @@ def reverse_dir(dir):
 
 
 def traversal():
-    map_graph = Graph()
-    mapped = set()
-    explored = {}
-    to_explore = []
-    current_room = player.current_room.id
+    # my graph
+    map_graph = []
+    # my visited set
+    explored = set()
+    # initialization
+    map_graph.append(0)
 
+    # while # of explored rooms < # of rooms in graph
     while len(explored) < len(room_graph):
-        prev_room = current_room
-        current_room = player.current_room.id
-        exits = player.current_room.get_exits()
-        random_dir = exits[randint(0, (len(exits) - 1))]
-        reverse = reverse_dir(random_dir)
-        # print(random_dir, reverse)
-        if current_room not in explored:
-            # this room has been explored but not mapped
-            explored[current_room] = {exit: '?' for exit in exits}
-            explored[current_room][reverse] = prev_room
-        if prev_room != current_room:
-            explored[current_room][reverse] = prev_room
-            explored[prev_room][random_dir] = current_room
-        # else:
-            # if len(exits) > 1:
-            #     exits.remove(random_dir)
-            #     random_dir = exits[randint(0, (len(exits) - 1))]
-            #     reverse = reverse_dir(random_dir)
-            # else:
-            #     random_dir = exits[0]
-            #     reverse = reverse_dir(random_dir)
-        player.travel(random_dir)
-        print(explored, '\n', explored[current_room],
-              '\n', f'{random_dir} to {explored[current_room][random_dir]}')
-        traversal_path.append(random_dir)
-    print(explored)
+        # our current location
+        current_room = map_graph[-1]
+        print(f'Current Room: {current_room}')
+        # mark as visited
+        explored.add(current_room)
+        # get the exits from the given graph
+        exits = room_graph[current_room][-1]
+        print(f'Exits: {exits}')
+        # reset the exploration queue for each room
+        to_explore = []
+        # if any room in exits is not in visited, add it to the exploration queue
+        for key, value in exits.items():
+            if value not in explored:
+                to_explore.append(value)
+                print(f'{value} added to exploration queue')
+        # if there are any rooms left unexplored
+        if len(to_explore) > 0:
+            # pick the first unvisited room
+            room_to_visit = to_explore[0]
+            # add to graph
+            map_graph.append(room_to_visit)
+        # if not
+        else:
+            # return to previous room
+            room_to_visit = map_graph[-2]
+            # remove 'last' room from graph
+            map_graph.pop()
+        # if our exit leads to a destination room, go there
+        for key, value in exits.items():
+            if value == room_to_visit:
+                # this is where the magic happens
+                traversal_path.append(value)
 
 
 traversal()
